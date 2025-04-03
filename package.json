@@ -1,0 +1,19 @@
+{
+  "name": "teamgame",
+  "version": "0.0.1",
+  "main": "guaxinim.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cl4rita/teamGame.git"
+  },
+  "author": "Clara Furtado",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Cl4rita/teamGame/issues"
+  },
+  "homepage": "https://github.com/Cl4rita/teamGame#readme",
+  "description": "Jogo em grupo"
+}
