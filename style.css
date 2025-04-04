@@ -1,3 +1,4 @@
+
 body {
     background: url('/assets/inicio2.png') no-repeat right center fixed;
     background-size: contain;
@@ -91,3 +92,19 @@ h2 {
     background: #9d1d04;
     transform: scale(1.05);
 }
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #3b3b3b;
+  }
+  
+  canvas{
+    margin: auto;
+    position: absolute;
+    top: 0%;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    background-color: #4b4b4b;
+  }
+ 
