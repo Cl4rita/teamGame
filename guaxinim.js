@@ -44,25 +44,25 @@ let shoots = {
   },
 }
 
-let groupOrcs = []
-let orcs ={
+let groupSoldiers = []
+let soldiers ={
   time : 0,
-  spawOrcs(){
+  spawnSoldiers(){
     this.time +=1
     size_X = Math.random() * (100 - 80) + 80
     size_Y = Math.random() * (140 - 80) + 80
     pos_Y = Math.random() *(500 - 80) + 80
     if(this.time>=60){
-      groupOrcs.push(new Orcs(1400, pos_Y, size_X, size_Y, "assets/orc2.png"))
+      groupSoldiers.push(new Soldiers(1400, pos_Y, size_X, size_Y, "assets/orc2.png"))
       this.time=0
     }
   },
-  destroyOrcs(){
+  destroySoldiers(){
     groupShoot.forEach((shoot)=>{
-      groupOrcs.forEach((orc)=>{
-        if(shoot.collide(orc)){
+      groupSoldiers.forEach((soldier)=>{
+        if(shoot.collide(soldier)){
           groupShoot.splice(groupShoot.indexOf(shoot),1)
-          groupOrcs.splice(groupOrcs.indexOf(orc),1)
+          groupSoldiers.splice(groupSoldiers.indexOf(soldier),1)
           bullets = 5
           pts += 1
           som4.play()
@@ -72,17 +72,17 @@ let orcs ={
   },
 
   draw(){
-    groupOrcs.forEach((orc)=>{
-      orc.draw()
+    groupSoldiers.forEach((soldier)=>{
+      soldier.draw()
     })
   },
   update(){
     this.spawOrcs()
     this.destroyOrcs()
-    groupOrcs.forEach((orc)=>{
-      orc.move()
-      if(orc.x < -100){
-        groupOrcs.splice(groupOrcs.indexOf(orc),1)
+    groupSoldiers.forEach((soldier)=>{
+      soldier.move()
+      if(soldier.x < -100){
+        groupSoldiers.splice(groupSoldiers.indexOf(soldier),1)
         mudaCena(gameOver)
       }
     })
@@ -122,7 +122,7 @@ let menu = {
   
   titulo: new Text("ORCs"),
   titulo2: new Text("Click para Iniciar"),
-  heroi: new Obj(30,380,80,120, "assets/heroi1.png"),
+  guaxinim: new Obj(30,380,80,120, "assets/heroi1.png"),
   
   click(){
     mudaCena(game)
@@ -132,7 +132,7 @@ let menu = {
     infinityBg.draw()
     this.titulo.draw_text(80,"Tahoma",500,200,"darkolivegreen")
     this.titulo2.draw_text(40,"Verdana",430,400,"white")
-    this.heroi.draw()
+    this.guaxinim.draw()
   },
   update(){
     infinityBg.moveBg()
@@ -142,35 +142,35 @@ let menu = {
 let game = {
   placar_txt: new Text("Pontos: "),
   placar: new Text(pts),
-  heroi: new Obj(30,200,80,120, "assets/heroi1.png"),
+  guaxinim: new Obj(30,200,80,120, "assets/heroi1.png"),
 
   click(){
     if(bullets > 0){
       bullets -= 1
       som2.play()
-      groupShoot.push(new Shoot(this.heroi.x,(this.heroi.y+this.heroi.height/2)-30,18,8, "assets/tiro5.png"))
+      groupShoot.push(new Shoot(this.guaxinim.x,(this.guaxinim.y+this.guaxinim.height/2)-30,18,8, "assets/tiro5.png"))
     }
   },
 
   moveHeroi(event){
-    this.heroi.x = event.offsetX - 40
-    this.heroi.y = event.offsetY - this.heroi.height/2
+    this.guaxinim.x = event.offsetX - 40
+    this.guaxinim.y = event.offsetY - this.guaxinim.height/2
   },
 
   draw(){
     infinityBg.draw()
     this.placar_txt.draw_text(30,"Tahoma",1100,50,"white")
     this.placar.draw_text(30,"Tahoma",1210,50,"white")
-    this.heroi.draw()
+    this.guaxinim.draw()
     shoots.draw()
-    orcs.draw()
+    soldiers.draw()
     som1.play()
     som3.pause()    
   },
   update(){
     infinityBg.moveBg()
     shoots.update()
-    orcs.update()
+    soldiers.update()
     this.placar.update_text(pts)
   },
 }
@@ -196,7 +196,7 @@ let gameOver = {
   limpa_cena(){
     pts = 0
     bullets = 5
-    groupOrcs = []
+    groupSoldiers = []
     groupShoot = []    
   },
 
@@ -213,6 +213,5 @@ function main(){
   cenaCorrente.update()
   requestAnimationFrame(main)
 }
-
 mudaCena(menu)
 main()

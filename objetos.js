@@ -66,7 +66,7 @@ class Shoot extends Obj{
   }
 }
 
-class Orcs extends Obj{
+class Soldiers extends Obj{
   velocidade = Math.random()*(12 - 2) + 2
   move(){
     this.x -= this.velocidade
