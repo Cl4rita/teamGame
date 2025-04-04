@@ -1,0 +1,33 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #3b3b3b;
+  }
+  
+  canvas{
+    margin: auto;
+    position: absolute;
+    top: 0%;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    background-color: #4b4b4b;
+  }
+
+#bot{
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #1A1F36; 
+    color: white;
+    border: 3px solid #0B0F1E; 
+    padding: 15px 30px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(255, 0, 0, 0.4);
+    left: 50px;
+}
