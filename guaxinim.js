@@ -9,8 +9,8 @@ let cenaCorrente = {};
 let bullets = 5;
 let pts = 0; // Mantenha pts como uma variável global
 let faseAtual = 1;
-const FASE_2_PONTOS = 50;
-const FASE_3_PONTOS = 100;
+const FASE_2_PONTOS = 40;
+const FASE_3_PONTOS = 80;
 
 // Grupos de objetos
 let groupShoot = [];
@@ -21,7 +21,7 @@ const fundosPorFase = [
     { fundo: "assets/fundo3.png", fundo2: "assets/fundo3_1.png" },
     { fundo: "assets/fundo1.png", fundo2: "assets/fundo1_1.png" },
     { fundo: "assets/fundo4.png", fundo2: "assets/fundo4_1.png" }
-];
+]
 
 // Objeto de fundo
 const infinityBg = {
@@ -72,7 +72,7 @@ function mostrarMensagemFase() {
         originalDraw.call(this);
         canvas.fillStyle = "rgba(0, 0, 0, 0.7)";
         canvas.fillRect(500, 250, 300, 100);
-        msg.draw_text(50, "Arial", 500, 320, "white");
+        msg.draw_text(50, "Arial", 560, 320, "white");
     };
 
     setTimeout(() => {
@@ -154,7 +154,7 @@ const shoots = {
 const menu = {
     titulo: new Text("Pixel Battle"),
     subtitulo: new Text("Clique para começar"),
-    guaxinim: new Obj(100, 300, 80, 120, "assets/guaxinimShoot_.png"),
+    guaxinim: new Obj(100, 300, 80, 120, "assets/guaxinimShoot_1.png"),
 
     click() {
         mudaCena(game);
@@ -174,7 +174,7 @@ const menu = {
 
 const game = {
     placar: new Text(`Pontos: ${pts} Fase: ${faseAtual}`),
-    guaxinim: new Obj(0, 0, 80, 120, "assets/guaxinimShoot_.png"),
+    guaxinim: new Obj(0, 0, 80, 120, "assets/guaxinimShoot_1.png"),
 
     click(e) {
         if (bullets > 0) {
@@ -185,6 +185,11 @@ const game = {
                 30, 10,
                 "assets/bala_direita.png"
             ));
+            
+            this.guaxinim.image = "assets/guaxinimShoot_3.png";
+            setTimeout(() => {
+            this.guaxinim.image = "assets/guaxinimShoot_1.png";
+            }, 100); 
         }
     },
 
