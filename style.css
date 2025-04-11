@@ -73,7 +73,7 @@ h2 {
     display: flex;
     justify-content: center;
     gap: 20px;
-    width: 400px;
+    width: 380px;
     /* flex-wrap: wrap; */
 }
 
