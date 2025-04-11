@@ -7,12 +7,14 @@ let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
 let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
 let tiros = new Audio('./Sound/som_tiro.wav');  
 let death = new Audio('./Sound/som_morte.wav'); 
-let capivara = new Audio('./Sound/som_morte.wav'); 
+let capivara = new Audio('./Sound/som_morte.wav');
+// let pedro = new Audio('./Sound/som_morte.wav');
 musica_fundo.loop = true;  // Faz a música tocar em loop
 musica_fundo.volume = 0.5; // Ajusta o volume para 50%
 tiros.volume = 0.8; // Ajusta o volume para 50%
 death.volume = 0.8; // Ajusta o volume para 50%
 capivara.volume = 0.8; // Ajusta o volume para 50%
+// pedro.volume = 0.8; // Ajusta o volume para 50%
 
 document.getElementById('playMusic').addEventListener('click', () => {
   if(musica_fundo.paused) {
@@ -20,6 +22,10 @@ document.getElementById('playMusic').addEventListener('click', () => {
     document.getElementById('playMusic').textContent = "♫ on";
   }else{
     musica_fundo.pause();
+    tiros.pause();
+    death.pause();
+    capivara.pause();
+    pedro.pause();
     document.getElementById('playMusic').textContent = "♫  off";
   }
 });
