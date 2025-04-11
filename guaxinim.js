@@ -4,6 +4,25 @@ canvas.imageSmoothingEnabled = false;
 
 let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
 
+let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
+musica_fundo.loop = true;  // Faz a música tocar em loop
+musica_fundo.volume = 0.5; // Ajusta o volume para 50%
+
+document.getElementById('playMusic').addEventListener('click', () => {
+  if (musica_fundo.paused) {
+    musica_fundo.play();
+    document.getElementById('playMusic').textContent = "♫ on";
+  } else {
+    musica_fundo.pause();
+    document.getElementById('playMusic').textContent = "♫  off";
+  }
+});
+
+document.addEventListener("click", (e)=>{
+  if(cenaCorrente.click){
+    cenaCorrente.click()
+  }
+});
 // Variáveis globais
 let cenaCorrente = {};
 let bullets = 5;
