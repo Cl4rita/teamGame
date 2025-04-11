@@ -4,6 +4,25 @@ canvas.imageSmoothingEnabled = false;
 
 let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
 
+let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
+musica_fundo.loop = true;  // Faz a música tocar em loop
+musica_fundo.volume = 0.5; // Ajusta o volume para 50%
+
+document.getElementById('playMusic').addEventListener('click', () => {
+  if (musica_fundo.paused) {
+    musica_fundo.play();
+    document.getElementById('playMusic').textContent = "♫ on";
+  } else {
+    musica_fundo.pause();
+    document.getElementById('playMusic').textContent = "♫  off";
+  }
+});
+
+document.addEventListener("click", (e)=>{
+  if(cenaCorrente.click){
+    cenaCorrente.click()
+  }
+});
 // Variáveis globais
 let cenaCorrente = {};
 let bullets = 5;
@@ -11,6 +30,7 @@ let pts = 0; // Mantenha pts como uma variável global
 let faseAtual = 1;
 const FASE_2_PONTOS = 40;
 const FASE_3_PONTOS = 80;
+const FASE_FINAL = 120;
 
 // Grupos de objetos
 let groupShoot = [];
@@ -55,7 +75,7 @@ const infinityBg = {
 
 // Sistema de fases
 function atualizarFase() {
-    const novaFase = pts >= FASE_3_PONTOS ? 3 : pts >= FASE_2_PONTOS ? 2 : 1;
+    const novaFase = pts >= FASE_FINAL ? 4 : pts >= FASE_3_PONTOS ? 3 : pts >= FASE_2_PONTOS ? 2 : 1;
 
     if (novaFase !== faseAtual) {
         faseAtual = novaFase;
@@ -86,10 +106,12 @@ const soldiers = {
 
     spawnSoldiers() {
         this.time++;
-        const spawnRate = faseAtual === 3 ? 40 : faseAtual === 2 ? 50 : 60;
+        const spawnRate = faseAtual === 4 ? 30 : faseAtual === 3 ? 40 : faseAtual === 2 ? 50 : 60;
 
         if (this.time >= spawnRate) {
-            const speed = faseAtual === 3 ? 8 + Math.random() * 8 :
+            const speed = 
+                faseAtual === 4 ? 11 + Math.random() * 7 :
+                faseAtual === 3 ? 8 + Math.random() * 8 :
                 faseAtual === 2 ? 5 + Math.random() * 9 :
                     2 + Math.random() * 10;
 
