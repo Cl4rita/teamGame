@@ -59,6 +59,10 @@ h2 {
 .button-container a {
     width: 100%;
     text-decoration: none; 
+    justify-content: center;
+    gap: 20px;
+    width: 370px;
+    /* flex-wrap: wrap; */
 }
 
 .button-container button {
@@ -128,3 +132,101 @@ footer {
         padding: 15px 25px;
     }
 }
+body{
+    margin: 0px;
+    padding: 0px;
+    background-color: #3b3b3b;
+  }
+  
+  canvas{
+    margin: auto;
+    position: absolute;
+    top: 0%;
+    bottom: 0%;
+    left: 0%;
+    right: 0%;
+    background-color: #4b4b4b;
+  }
+  /* escolha skin */
+   
+
+    .container2 {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: absolute;
+      top: 37%;
+      left: 33%;
+    }
+
+    .botao1 {
+        width: 250px;
+        height: 350px;
+        background-image: url('guaxinim.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+        backdrop-filter: blur(8px); /* Aplica o blur no que estiver atrás */
+        
+      
+        border: none;
+        cursor: pointer;
+        border-radius: 12px; /* opcional: cantos arredondados */
+      }
+      
+    .botao2 {
+        width: 250px;
+        height: 350px;
+        background-image: url('capivara.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+        backdrop-filter: blur(8px); /* Aplica o blur no que estiver atrás */
+        
+      
+        border: none;
+        cursor: pointer;
+        border-radius: 12px; /* opcional: cantos arredondados */
+        
+      }
+
+      .botao3 {
+        width: 250px;
+        height: 350px;
+        background-image: url('soldado_azul.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+      
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+        backdrop-filter: blur(8px); /* Aplica o blur no que estiver atrás */
+        
+      
+        border: none;
+    
+        cursor: pointer;
+        border-radius: 12px; /* opcional: cantos arredondados */
+      }
+
+      .botao4 {
+        width: 250px;
+        height: 350px;
+        background-image: url('soldado_rosa.png');
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 248px;
+      
+        background-color: rgba(255, 255, 255, 0.1); /* Fundo semi-transparente */
+        backdrop-filter: blur(8px); /* Aplica o blur no que estiver atrás */
+        
+      
+        border: none;
+        cursor: pointer;
+        border-radius: 12px; /* opcional: cantos arredondados */
+      }
+  
