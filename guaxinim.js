@@ -5,14 +5,20 @@ canvas.imageSmoothingEnabled = false;
 let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
 
 let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
+let tiros = new Audio('./Sound/som_tiro.wav');  
+let death = new Audio('./Sound/som_morte.wav'); 
+let capivara = new Audio('./Sound/som_morte.wav'); 
 musica_fundo.loop = true;  // Faz a música tocar em loop
 musica_fundo.volume = 0.5; // Ajusta o volume para 50%
+tiros.volume = 0.8; // Ajusta o volume para 50%
+death.volume = 0.8; // Ajusta o volume para 50%
+capivara.volume = 0.8; // Ajusta o volume para 50%
 
 document.getElementById('playMusic').addEventListener('click', () => {
-  if (musica_fundo.paused) {
+  if(musica_fundo.paused) {
     musica_fundo.play();
     document.getElementById('playMusic').textContent = "♫ on";
-  } else {
+  }else{
     musica_fundo.pause();
     document.getElementById('playMusic').textContent = "♫  off";
   }
@@ -139,13 +145,13 @@ const soldiers = {
                 }
             });
         });
-
         // Remove soldados que saíram da tela e Game Over
         groupSoldiers.forEach((soldier, index) => {
             soldier.move();
             if (soldier.x < -100) {
                 groupSoldiers.splice(index, 1);
                 mudaCena(gameOver);
+                death.play();
             }
         });
     },
@@ -164,7 +170,7 @@ const shoots = {
         });
     },
 
-    draw() {
+    draw(){
         groupShoot.forEach(shoot => shoot.draw());
     }
 };
@@ -198,6 +204,7 @@ const game = {
     click(e) {
         if (bullets > 0) {
             bullets--;
+            tiros.play()
             groupShoot.push(new Shoot(
                 this.guaxinim.x + this.guaxinim.width,
                 this.guaxinim.y + this.guaxinim.height / 2 - 15,
@@ -235,16 +242,16 @@ const game = {
 };
 
 const gameOver = {
-    placar: new Text(`Pontos: ${pts} Fase: ${faseAtual}`),
-    instrucao: new Text("Clique para recomeçar"),
+  placar: new Text(`Pontos: ${pts} Fase: ${faseAtual}`),
+  instrucao: new Text("Clique para recomeçar"),
 
     draw() {
         gameOverImg.draw();
         this.placar.draw_text(30, "Arial", 1000, 50, "lightblue");
         this.instrucao.draw_text(30, "Arial", 475, 570, "yellow");
-    },
-
-    click() {
+      },
+      
+      click() {
         bullets = 5;
         groupShoot = [];
         groupSoldiers = [];
