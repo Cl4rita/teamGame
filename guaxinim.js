@@ -1,4 +1,3 @@
-// Configuração inicial
 const canvas = document.getElementById('canvas').getContext('2d');
 canvas.imageSmoothingEnabled = false;
 
@@ -9,12 +8,12 @@ let tiros = new Audio('./Sound/som_tiro.wav');
 let death = new Audio('./Sound/som_morte.wav'); 
 let capivara = new Audio('./Sound/som_morte.wav');
 // let pedro = new Audio('./Sound/som_morte.wav');
-musica_fundo.loop = true;  // Faz a música tocar em loop
-musica_fundo.volume = 0.5; // Ajusta o volume para 50%
-tiros.volume = 0.8; // Ajusta o volume para 50%
-death.volume = 0.8; // Ajusta o volume para 50%
-capivara.volume = 0.8; // Ajusta o volume para 50%
-// pedro.volume = 0.8; // Ajusta o volume para 50%
+musica_fundo.loop = true;
+musica_fundo.volume = 0.5;
+tiros.volume = 0.8;
+death.volume = 0.8;
+capivara.volume = 0.8;
+// pedro.volume = 0.8;
 
 document.getElementById('playMusic').addEventListener('click', () => {
   if(musica_fundo.paused) {
@@ -42,7 +41,9 @@ let pts = 0; // Mantenha pts como uma variável global
 let faseAtual = 1;
 const FASE_2_PONTOS = 40;
 const FASE_3_PONTOS = 80;
-const FASE_FINAL = 120;
+const FASE_4_PONTOS = 120;
+const FASE_5_PONTOS = 160;
+const FASE_6_PONTOS = 200;
 
 // Grupos de objetos
 let groupShoot = [];
@@ -51,7 +52,7 @@ let groupSoldiers = [];
 // Fundos por fase
 const fundosPorFase = [
     { fundo: "assets/fundo3.png", fundo2: "assets/fundo3_1.png" },
-    { fundo: "assets/fundo1.png", fundo2: "assets/fundo1_1.png" },
+    { fundo: "assets/fundo2.png", fundo2: "assets/fundo2_1.png" },
     { fundo: "assets/fundo4.png", fundo2: "assets/fundo4_1.png" }
 ]
 
@@ -82,17 +83,46 @@ const infinityBg = {
         if (this.bg.x >= 2600) this.bg.x = 0;
         if (this.bg2.x >= 1300) this.bg2.x = -1300;
         if (this.bg3.x >= 0) this.bg3.x = -2600;
+    },
+    atualizarFundo(fase) {
+        // Usa o operador módulo (%) para ciclar entre as fases disponíveis
+        const indice = (fase - 1) % fundosPorFase.length;
+        this.bg.image = fundosPorFase[indice].fundo;
+        this.bg2.image = fundosPorFase[indice].fundo2;
+        this.bg3.image = fundosPorFase[indice].fundo;
     }
 };
 
 // Sistema de fases
 function atualizarFase() {
-    const novaFase = pts >= FASE_FINAL ? 4 : pts >= FASE_3_PONTOS ? 3 : pts >= FASE_2_PONTOS ? 2 : 1;
+    const novaFase = pts >= FASE_6_PONTOS ? 6 : pts >= FASE_5_PONTOS ? 5 : pts >= FASE_4_PONTOS ? 4 : pts >= FASE_3_PONTOS ? 3 : pts >= FASE_2_PONTOS ? 2 : 1;
 
     if (novaFase !== faseAtual) {
         faseAtual = novaFase;
         infinityBg.atualizarFundo(faseAtual);
         mostrarMensagemFase();
+    }
+    const faseAnterior = faseAtual;
+    faseAtual = pts >= FASE_6_PONTOS ? 6 : 
+               pts >= FASE_5_PONTOS ? 5 : 
+               pts >= FASE_4_PONTOS ? 4 : 
+               pts >= FASE_3_PONTOS ? 3 : 
+               pts >= FASE_2_PONTOS ? 2 : 1;
+
+    if (faseAtual !== faseAnterior) {
+        infinityBg.atualizarFundo(faseAtual);
+        mostrarMensagemFase();
+        
+        // Aumenta a dificuldade progressivamente
+        aumentarDificuldade(faseAtual);
+    }
+}
+
+function aumentarDificuldade(fase) {
+    // Você pode adicionar efeitos especiais para fases específicas
+    if (fase === 4) {
+        // Exemplo: na fase 4 (que usa o mesmo fundo que a 1), adicione algo especial
+        console.log("Fase especial iniciada!");
     }
 }
 
@@ -118,10 +148,12 @@ const soldiers = {
 
     spawnSoldiers() {
         this.time++;
-        const spawnRate = faseAtual === 4 ? 30 : faseAtual === 3 ? 40 : faseAtual === 2 ? 50 : 60;
+        const spawnRate = faseAtual === 6 ? 10 : faseAtual === 5 ? 20 : faseAtual === 4 ? 30 : faseAtual === 3 ? 40 : faseAtual === 2 ? 50 : 60;
 
         if (this.time >= spawnRate) {
             const speed = 
+                faseAtual === 6 ? 17 + Math.random() * 5 :
+                faseAtual === 5 ? 14 + Math.random() * 6 :
                 faseAtual === 4 ? 11 + Math.random() * 7 :
                 faseAtual === 3 ? 8 + Math.random() * 8 :
                 faseAtual === 2 ? 5 + Math.random() * 9 :
@@ -247,7 +279,58 @@ const game = {
         soldiers.update();
         atualizarFase();
         this.placar.update_text(`Pontos: ${pts} Fase: ${faseAtual}`);
-    }
+    },
+    initTouchControls() {
+        const canvasElement = document.getElementById('canvas');
+        let touchStartX = 0;
+        let touchStartY = 0;
+        
+        canvasElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+            
+            // Dispara um tiro no toque
+            if (bullets > 0) {
+                bullets--;
+                tiros.play();
+                groupShoot.push(new Shoot(
+                    this.guaxinim.x + this.guaxinim.width,
+                    this.guaxinim.y + this.guaxinim.height / 2 - 15,
+                    30, 10,
+                    "assets/bala_direita.png"
+                ));
+                
+                this.guaxinim.image = "assets/guaxinimShoot_3.png";
+                setTimeout(() => {
+                    this.guaxinim.image = "assets/guaxinimShoot_1.png";
+                }, 100);
+            }
+        });
+        
+        canvasElement.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const moveX = touch.clientX - touchStartX;
+            const moveY = touch.clientY - touchStartY;
+            
+            // Move o personagem proporcionalmente ao movimento do dedo
+            this.guaxinim.x += moveX * 2;
+            this.guaxinim.y += moveY * 2;
+            
+            // Limita o movimento dentro da tela
+            this.guaxinim.x = Math.max(0, Math.min(1300 - this.guaxinim.width, this.guaxinim.x));
+            this.guaxinim.y = Math.max(0, Math.min(600 - this.guaxinim.height, this.guaxinim.y));
+            
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        });
+    },
+};
+menu.click = function() {
+    mudaCena(game);
+    game.initTouchControls(); // Adiciona controles touch
 };
 
 const gameOver = {
@@ -274,6 +357,7 @@ const gameOver = {
         infinityBg.moveBg();
         this.placar.update_text(`Pontos: ${pts} Fase: ${faseAtual}`);
     }
+    
 };
 
 // Funções globais
@@ -289,8 +373,10 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
-// Event listeners
 document.addEventListener("click", (e) => {
+    if (cenaCorrente.click) cenaCorrente.click(e);
+});
+document.addEventListener("touchpress", (e) => {
     if (cenaCorrente.click) cenaCorrente.click(e);
 });
 
