@@ -1,8 +1,7 @@
 body{
     margin: 0px;
     padding: 0px;
-    background-color: #001c00;
-    background-image: url('./assets/canvaBG.jpeg'), linear-gradient(#001c00, #000);
+    background-color: #3b3b3b;
   }
   
   canvas{
@@ -34,7 +33,7 @@ body{
 }
 #playMusic {
   position: fixed;
-    top: 90px;
+    top: 200px;
     left: 20px;
     background-color: #1A1F36; 
     color: white;

@@ -1,3 +1,4 @@
+
 body {
     background: url('/assets/inicio2.png') no-repeat right center fixed;
     background-size: contain;
@@ -73,7 +74,7 @@ h2 {
     display: flex;
     justify-content: center;
     gap: 20px;
-    width: 380px;
+    width: 400px;
     /* flex-wrap: wrap; */
 }
 
@@ -193,3 +194,7 @@ body{
         cursor: pointer;
         border-radius: 12px; /* opcional: cantos arredondados */
       }
+  
+
+    
+  
