@@ -9,7 +9,7 @@ const pontosParaVencer = 5;
 
 // Defina as listas de imagens PRIMEIRO
 const imagensAnimais = ["assets/guaxinimShoot_1.png", "assets/capivaraRight.png"];
-const imagensSoldados = ["assets/soldier3.png", "assets/pinkSoldier.png"];
+const imagensSoldados = ["assets/soldier3.png", "assets/ruining_soldierPink.png"];
 
 // Obtenha as seleções do localStorage
 const animalSelecionado = parseInt(localStorage.getItem("animalSelecionado")) || 0;
@@ -27,7 +27,7 @@ const animal = {
   height: 80,
   img: new Image(),
   velocidade: 8,
-  vidas: 3
+  vidas: 5
 };
 animal.img.src = imagensAnimais[animalSelecionado]; // Só uma atribuição
 
@@ -38,7 +38,7 @@ const soldado = {
   height: 80,
   img: new Image(),
   velocidade: 8,
-  vidas: 3
+  vidas: 5
 };
 soldado.img.src = imagensSoldados[soldadoSelecionado]; // Só uma atribuição
 
@@ -75,12 +75,12 @@ let tirosAnimal = [];
 let tirosSoldado = [];
 
 document.addEventListener("keydown", (e) => {
-  if (['w', 's', 'ArrowUp', 'ArrowDown', ' ', 'Control'].includes(e.key)) {
+  if (['w', 's', 'ArrowUp', 'ArrowDown', 'd', 'ArrowLeft'].includes(e.key)) {
     teclas[e.key] = true;
   }
   
-  // Tiro do animal (barra de espaço)
-  if (e.key === ' ' && gameActive) {
+  // Tiro do animal (tecla D)
+  if (e.key === 'd' && gameActive) {
     tirosAnimal.push({
       x: animal.x + animal.width,
       y: animal.y + animal.height/2 - 5,
@@ -90,8 +90,8 @@ document.addEventListener("keydown", (e) => {
     });
   }
   
-  // Tiro do soldado (Ctrl)
-  if (e.key === 'Control' && gameActive) {
+  // Tiro do soldado (tecla ArrowLeft)
+  if (e.key === 'ArrowLeft' && gameActive) {
     tirosSoldado.push({
       x: soldado.x - 30,
       y: soldado.y + soldado.height/2 - 5,
@@ -101,6 +101,7 @@ document.addEventListener("keydown", (e) => {
     });
   }
 });
+
 
 document.addEventListener("keyup", (e) => {
   if (['w', 's', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
@@ -146,8 +147,7 @@ function verificarColisoes() {
       tirosAnimal.splice(index, 1);
       soldado.vidas--;
       if (soldado.vidas <= 0) {
-        pontosAnimal++;
-        resetRound();
+        gameOver("ANIMAL");
       }
     }
   });
@@ -158,16 +158,10 @@ function verificarColisoes() {
       tirosSoldado.splice(index, 1);
       animal.vidas--;
       if (animal.vidas <= 0) {
-        pontosSoldado++;
-        resetRound();
+        gameOver("SOLDADO");
       }
     }
   });
-  
-  // Verifica vencedor
-  if (pontosAnimal >= pontosParaVencer || pontosSoldado >= pontosParaVencer) {
-    gameOver();
-  }
 }
 
 function colisao(obj1, obj2) {
@@ -178,17 +172,23 @@ function colisao(obj1, obj2) {
 }
 
 function resetRound() {
-  animal.vidas = 3;
-  soldado.vidas = 3;
+  // Apenas reposiciona os personagens e limpa os tiros
   animal.y = 250;
   soldado.y = 250;
   tirosAnimal = [];
   tirosSoldado = [];
 }
 
-function gameOver() {
+function gameOver(vencedor) {
   gameActive = false;
-  // Aqui você pode adicionar lógica para mostrar quem venceu
+  // Mostra quem venceu
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.font = "48px Arial";
+  ctx.fillText(`${vencedor} VENCEU!`, canvas.width/2 - 150, canvas.height/2);
+  ctx.font = "24px Arial";
+  ctx.fillText("Clique para voltar ao menu", canvas.width/2 - 120, canvas.height/2 + 50);
 }
 
 
@@ -222,11 +222,13 @@ function draw() {
   // Desenha HUD (vidas e pontos)
   ctx.fillStyle = "white";
   ctx.font = "24px Arial";
-  ctx.fillText(`Animal: ${pontosAnimal}`, 50, 30);
-  ctx.fillText(`Soldado: ${pontosSoldado}`, canvas.width - 150, 30);
   
-  // Barras de vida
+  // Vidas do animal
+  ctx.fillText(`Vidas: ${animal.vidas}`, 50, 30);
   drawVidas(animal, 50, 60);
+  
+  // Vidas do soldado
+  ctx.fillText(`Vidas: ${soldado.vidas}`, canvas.width - 150, 30);
   drawVidas(soldado, canvas.width - 150, 60);
   
   if (!gameActive) {
@@ -234,11 +236,21 @@ function draw() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "white";
     ctx.font = "48px Arial";
-    const vencedor = pontosAnimal >= pontosParaVencer ? "ANIMAL" : "SOLDADO";
+    
+    // Determina o vencedor baseado nas vidas restantes
+    let vencedor;
+    if (animal.vidas <= 0) {
+        vencedor = "SOLDADO";
+    } else if (soldado.vidas <= 0) {
+        vencedor = "ANIMAL";
+    } else {
+        vencedor = "JOGO EMPATADO"; // Caso raro de ambos perderem vidas no mesmo frame
+    }
+    
     ctx.fillText(`${vencedor} VENCEU!`, canvas.width/2 - 150, canvas.height/2);
     ctx.font = "24px Arial";
     ctx.fillText("Clique para voltar ao menu", canvas.width/2 - 120, canvas.height/2 + 50);
-  }
+}
   
   requestAnimationFrame(draw);
 }
