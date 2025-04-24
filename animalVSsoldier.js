@@ -1,12 +1,12 @@
 const canvas = document.getElementById('canvas').getContext('2d');
 canvas.imageSmoothingEnabled = false;
 
-let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
-let BackgroundImg = new Obj(0, 0, 1300, 600, './assets/gitu8gy7tfdhtsdujsdr.png');
+// let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
+let BackgroundImg = new Obj(0, 0, 1300, 600, './assets/ruining_soldierPink.png');
 
 let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
-musica_fundo.loop = true;  // Faz a música tocar em loop
-musica_fundo.volume = 0.5; // Ajusta o volume para 50%
+musica_fundo.loop = true;
+musica_fundo.volume = 0.5; 
 
 document.getElementById('playMusic').addEventListener('click', () => {
   if (musica_fundo.paused) {
