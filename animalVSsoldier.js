@@ -11,9 +11,6 @@ tiroAnimalImg.src = 'assets/bala_direita.png';
 const tiroSoldadoImg = new Image();
 tiroSoldadoImg.src = 'assets/bala_esquerda.png'; 
 
-const vitoriaAnimalImg = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
-const vitoriaSoldadoImg = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
-
 const imagensAnimais = ["assets/guaxinimShoot_1.png", "assets/capivaraRight.png"];
 const imagensSoldados = ["assets/soldier3.png", "assets/ruining_soldierPink.png"];
 
@@ -22,6 +19,8 @@ const soldadoSelecionado = parseInt(localStorage.getItem("soldadoSelecionado")) 
 
 const backgroundImg = new Obj(0, 0, canvas.width, canvas.height, './assets/bg_1v1.png');
 const gameOverImg = new Obj(0, 0, canvas.width, canvas.height, './assets/gameOverAnimals.png');
+const vitoriaAnimalImg = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
+const vitoriaSoldadoImg = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
 
 // Personagens
 const animal = {
