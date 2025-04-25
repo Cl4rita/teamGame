@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="./assets/icon.png" type="image/png">
-    <script src="select.js" defer></script>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js"defer></script>
     
-    <!-- Link para o Font Awesome -->
+   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     
     <title>Pixel Battle</title>
@@ -19,15 +19,26 @@
         <h2>Escolha sua skin e <br> prepare-se para a batalha!</h2>
         
         <div class="button-container">
-            
             <button onclick="window.location.href='index.html';" id="voltarButton">voltar</button>
             <button onclick="window.location.href='1v1.html';" id="jogoButton">jogar</button>
         </div>
     </div>
+
     <div class="container2">
         <button class="botao1"></button>
         <button class="botao2"></button>
         <button class="botao3"></button>
         <button class="botao4"></button>
-      </div>
+    </div>
+
+    <!-- Áudio para o botão -->
+    <audio id="somBotao1">
+        <source src="./Sound/capibara.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+    <audio id="somBotao2">
+        <source src="./Sound/pedro.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+</body>
 </html>
