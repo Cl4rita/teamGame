@@ -1,7 +1,6 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 
-// Configurações iniciais
 let gameActive = true;
 let pontosAnimal = 0;
 let pontosSoldado = 0;
@@ -15,15 +14,12 @@ tiroSoldadoImg.src = 'assets/bala_esquerda.png';
 const vitoriaAnimalImg = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
 const vitoriaSoldadoImg = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
 
-// Defina as listas de imagens PRIMEIRO
 const imagensAnimais = ["assets/guaxinimShoot_1.png", "assets/capivaraRight.png"];
 const imagensSoldados = ["assets/soldier3.png", "assets/ruining_soldierPink.png"];
 
-// Obtenha as seleções do localStorage
 const animalSelecionado = parseInt(localStorage.getItem("animalSelecionado")) || 0;
 const soldadoSelecionado = parseInt(localStorage.getItem("soldadoSelecionado")) || 0;
 
-// Inicialize os objetos de imagem
 const backgroundImg = new Obj(0, 0, canvas.width, canvas.height, './assets/bg_1v1.png');
 const gameOverImg = new Obj(0, 0, canvas.width, canvas.height, './assets/gameOverAnimals.png');
 
@@ -58,7 +54,6 @@ const teclas = {
   ArrowDown: false
 };
 
-// Sistema de áudio
 let musica_fundo = new Audio('./Sound/musica_fundo.wav');
 musica_fundo.loop = true;
 musica_fundo.volume = 0.5;
@@ -87,7 +82,6 @@ document.addEventListener("keydown", (e) => {
     teclas[e.key] = true;
   }
   
-  // Tiro do animal (tecla D)
   if (e.key === 'd' && gameActive && tirosAnimal.length < 4) {
     tirosAnimal.push({
       x: animal.x + animal.width,
@@ -141,14 +135,10 @@ function update() {
       tirosSoldado.splice(index, 1);
     }
   });
-  
-  // Verifica colisões
   verificarColisoes();
 }
 
-// Verifica colisões
 function verificarColisoes() {
-  // Tiros do animal no soldado
   tirosAnimal.forEach((tiro, index) => {
     if (colisao(tiro, soldado)) {
       tirosAnimal.splice(index, 1);
@@ -159,7 +149,6 @@ function verificarColisoes() {
     }
   });
   
-  // Tiros do soldado no animal
   tirosSoldado.forEach((tiro, index) => {
     if (colisao(tiro, animal)) {
       tirosSoldado.splice(index, 1);
@@ -179,7 +168,6 @@ function colisao(obj1, obj2) {
 }
 
 function resetRound() {
-  // Apenas reposiciona os personagens e limpa os tiros
   animal.y = 250;
   soldado.y = 250;
   tirosAnimal = [];
@@ -189,10 +177,8 @@ function resetRound() {
 function gameOver(vencedor) {
   gameActive = false;
   
-  // Limpa o canvas completamente
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-  // Desenha a imagem de vitória correspondente
   if (vencedor === "ANIMAL" && vitoriaAnimalImg.loaded) {
     vitoriaAnimalImg.draw(ctx);
   } 
@@ -207,13 +193,10 @@ function gameOver(vencedor) {
 
 
 function draw() {
-  // Limpa o canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  
-  // Desenha background
+
   backgroundImg.draw(ctx);
   
-  // Desenha personagens (com verificação de carregamento)
   if (animal.img.complete && animal.img.naturalWidth !== 0) {
     ctx.drawImage(animal.img, animal.x, animal.y, animal.width, animal.height);
   }
@@ -233,7 +216,6 @@ function draw() {
     }
   });
   
-  // Desenha HUD (vidas e pontos)
   ctx.fillStyle = "white";
   ctx.font = "24px Arial";
   
@@ -246,25 +228,20 @@ function draw() {
   drawVidas(soldado, canvas.width - 150, 60);
   
   if (!gameActive) {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "white";
-    ctx.font = "48px Arial";
-    
-    // Determina o vencedor baseado nas vidas restantes
     let vencedor;
     if (animal.vidas <= 0) {
         vencedor = "SOLDADO";
+        vitoriaSoldadoImg.draw(ctx);
     } else if (soldado.vidas <= 0) {
         vencedor = "ANIMAL";
+        vitoriaAnimalImg.draw(ctx);
     } else {
-        vencedor = "JOGO EMPATADO"; // Caso raro de ambos perderem vidas no mesmo frame
+        vencedor = "JOGO EMPATADO";
     }
 
     ctx.font = "24px Arial";
     ctx.fillText("Clique para voltar ao menu", canvas.width/2 - 120, canvas.height/2 + 50);
 }
-  
   requestAnimationFrame(draw);
 }
 
@@ -276,12 +253,11 @@ function drawVidas(personagem, x, y) {
 }
 
 let resourcesLoaded = 0;
-const totalResources = 4; // background + gameover + 2 personagens
+const totalResources = 4;
 
 function checkLoading() {
   resourcesLoaded++;
   if (resourcesLoaded === totalResources) {
-    // Todos recursos carregados, inicia o jogo
     requestAnimationFrame(draw);
     musica_fundo.play();
   }
@@ -293,11 +269,9 @@ gameOverImg.img.onload = checkLoading;
 animal.img.onload = checkLoading;
 soldado.img.onload = checkLoading;
 
-// Inicia o jogo
 draw();
 setInterval(update, 1000/60);
 
-// Volta ao menu quando clicar após game over
 canvas.addEventListener("click", () => {
   if (!gameActive) {
     window.location.href = "index.html";
