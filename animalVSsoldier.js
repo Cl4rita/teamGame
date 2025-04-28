@@ -11,6 +11,9 @@ tiroAnimalImg.src = 'assets/bala_direita.png';
 const tiroSoldadoImg = new Image();
 tiroSoldadoImg.src = 'assets/bala_esquerda.png'; 
 
+let telaVitoriaAtiva = false;
+let imagemVitoriaAtual = null;
+
 const imagensAnimais = ["assets/guaxinimShoot_1.png", "assets/capivaraRight.png"];
 const imagensSoldados = ["assets/soldier3.png", "assets/ruining_soldierPink.png"];
 
@@ -19,8 +22,11 @@ const soldadoSelecionado = parseInt(localStorage.getItem("soldadoSelecionado")) 
 
 const backgroundImg = new Obj(0, 0, canvas.width, canvas.height, './assets/bg_1v1.png');
 const gameOverImg = new Obj(0, 0, canvas.width, canvas.height, './assets/gameOverAnimals.png');
-const vitoriaAnimalImg = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
-const vitoriaSoldadoImg = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
+const vitoriaAnimal = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
+const vitoriaSoldado = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
+
+let tiros = new Audio('./Sound/som_tiro.wav');
+tiros.volume = 0.8;
 
 // Personagens
 const animal = {
@@ -62,7 +68,8 @@ document.getElementById('playMusic').addEventListener('click', () => {
     musica_fundo.play();
     document.getElementById('playMusic').textContent = "♫ on";
   } else {
-    musica_fundo.pause();
+    musica_fundo.pause()
+    tiros.pause();
     document.getElementById('playMusic').textContent = "♫ off";
   }
 });
@@ -81,7 +88,7 @@ document.addEventListener("keydown", (e) => {
     teclas[e.key] = true;
   }
   
-  if (e.key === 'd' && gameActive && tirosAnimal.length < 4) {
+  if (e.key === 'd' && gameActive && tirosAnimal.length < 3) {
     tirosAnimal.push({
       x: animal.x + animal.width,
       y: animal.y + animal.height/2 - 5,
@@ -91,7 +98,7 @@ document.addEventListener("keydown", (e) => {
     });
   }
   
-  if (e.key === 'ArrowLeft' && gameActive && tirosSoldado.length < 4) {
+  if (e.key === 'ArrowLeft' && gameActive && tirosSoldado.length < 3) {
     tirosSoldado.push({
       x: soldado.x - 30,
       y: soldado.y + soldado.height/2 - 5,
@@ -123,6 +130,7 @@ function update() {
   // Movimento tiros
   tirosAnimal.forEach((tiro, index) => {
     tiro.x += tiro.velocidade;
+    tiros.play()
     if (tiro.x > canvas.width) {
       tirosAnimal.splice(index, 1);
     }
@@ -130,6 +138,7 @@ function update() {
   
   tirosSoldado.forEach((tiro, index) => {
     tiro.x -= tiro.velocidade;
+    tiros.play()
     if (tiro.x < 0) {
       tirosSoldado.splice(index, 1);
     }
@@ -173,25 +182,41 @@ function resetRound() {
   tirosSoldado = [];
 }
 
+// 2. Substitua a função gameOver por isso:
 function gameOver(vencedor) {
   gameActive = false;
+  telaVitoriaAtiva = true;
   
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Carrega a imagem FRESCA toda vez
+  imagemVitoriaAtual = new Image();
+  imagemVitoriaAtual.onload = function() {
+    // Força o redesenho
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imagemVitoriaAtual, 0, 0, canvas.width, canvas.height);
+    
+    // Texto
+    ctx.fillStyle = "orange";
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
+    ctx.fillText("Clique para voltar ao menu", canvas.width/2,580);
+  };
   
-  if (vencedor === "ANIMAL" && vitoriaAnimalImg.loaded) {
-    vitoriaAnimalImg.draw(ctx);
-  } 
-  else if (vencedor === "SOLDADO" && vitoriaSoldadoImg.loaded) {
-    vitoriaSoldadoImg.draw(ctx);
-  }
-  ctx.fillStyle = "white";
-  ctx.font = "24px Arial";
-  ctx.fillText("Clique para voltar ao menu", canvas.width/2 - 120, canvas.height/2 + 50);
+  imagemVitoriaAtual.onerror = function() {
+    // Fallback caso a imagem falhe
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillText(`${vencedor} VENCEU!`, canvas.width/2, canvas.height/2);
+  };
   
+  // Escolhe a imagem correta
+  imagemVitoriaAtual.src = vencedor === "ANIMAL" 
+    ? './assets/WinAnimals.png' 
+    : './assets/winSoldiers.png';
 }
 
-
 function draw() {
+  if (telaVitoriaAtiva) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   backgroundImg.draw(ctx);
@@ -227,20 +252,8 @@ function draw() {
   drawVidas(soldado, canvas.width - 150, 60);
   
   if (!gameActive) {
-    let vencedor;
-    if (animal.vidas <= 0) {
-        vencedor = "SOLDADO";
-        vitoriaSoldadoImg.draw(ctx);
-    } else if (soldado.vidas <= 0) {
-        vencedor = "ANIMAL";
-        vitoriaAnimalImg.draw(ctx);
-    } else {
-        vencedor = "JOGO EMPATADO";
-    }
-
-    ctx.font = "24px Arial";
-    ctx.fillText("Clique para voltar ao menu", canvas.width/2 - 120, canvas.height/2 + 50);
-}
+    return;
+  }
   requestAnimationFrame(draw);
 }
 
@@ -261,8 +274,8 @@ function checkLoading() {
     musica_fundo.play();
   }
 }
-vitoriaAnimalImg.img.onload = checkLoading;
-vitoriaSoldadoImg.img.onload = checkLoading;
+vitoriaAnimal.img.onload = checkLoading;
+vitoriaSoldado.img.onload = checkLoading;
 backgroundImg.img.onload = checkLoading;
 gameOverImg.img.onload = checkLoading;
 animal.img.onload = checkLoading;
