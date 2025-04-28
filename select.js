@@ -1,4 +1,4 @@
-let selectedAnimal = null;
+  let selectedAnimal = null;
   let selectedSoldier = null;
 
   const animalButtons = [document.querySelector(".botao1"), document.querySelector(".botao2")];

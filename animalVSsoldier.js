@@ -1,86 +1,291 @@
-const canvas = document.getElementById('canvas').getContext('2d');
-canvas.imageSmoothingEnabled = false;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
 
-let gameOverImg = new Obj(0, 0, 1300, 600, './assets/gameOverAnimals.png');
-let BackgroundImg = new Obj(0, 0, 1300, 600, './assets/gitu8gy7tfdhtsdujsdr.png');
+let gameActive = true;
+let pontosAnimal = 0;
+let pontosSoldado = 0;
+const pontosParaVencer = 5;
 
-let musica_fundo = new Audio('./Sound/musica_fundo.wav');  
-musica_fundo.loop = true;  // Faz a música tocar em loop
-musica_fundo.volume = 0.5; // Ajusta o volume para 50%
+const tiroAnimalImg = new Image();
+tiroAnimalImg.src = 'assets/bala_direita.png';
+const tiroSoldadoImg = new Image();
+tiroSoldadoImg.src = 'assets/bala_esquerda.png'; 
+
+let telaVitoriaAtiva = false;
+let imagemVitoriaAtual = null;
+
+const imagensAnimais = ["assets/guaxinimShoot_1.png", "assets/capivaraRight.png"];
+const imagensSoldados = ["assets/soldier3.png", "assets/ruining_soldierPink.png"];
+
+const animalSelecionado = parseInt(localStorage.getItem("animalSelecionado")) || 0;
+const soldadoSelecionado = parseInt(localStorage.getItem("soldadoSelecionado")) || 0;
+
+const backgroundImg = new Obj(0, 0, canvas.width, canvas.height, './assets/bg_1v1.png');
+const gameOverImg = new Obj(0, 0, canvas.width, canvas.height, './assets/gameOverAnimals.png');
+const vitoriaAnimal = new Obj(0, 0, canvas.width, canvas.height, './assets/WinAnimals.png');
+const vitoriaSoldado = new Obj(0, 0, canvas.width, canvas.height, './assets/winSoldiers.png');
+
+let tiros = new Audio('./Sound/som_tiro.wav');
+tiros.volume = 0.8;
+
+// Personagens
+const animal = {
+  x: 50,
+  y: 250,
+  width: 80,
+  height: 80,
+  img: new Image(),
+  velocidade: 8,
+  vidas: 5
+};
+animal.img.src = imagensAnimais[animalSelecionado]; // Só uma atribuição
+
+const soldado = {
+  x: 1170,
+  y: 250,
+  width: 80,
+  height: 80,
+  img: new Image(),
+  velocidade: 8,
+  vidas: 5
+};
+soldado.img.src = imagensSoldados[soldadoSelecionado]; // Só uma atribuição
+
+// Controles
+const teclas = {
+  w: false,
+  s: false,
+  ArrowUp: false,
+  ArrowDown: false
+};
+
+let musica_fundo = new Audio('./Sound/musica_fundo.wav');
+musica_fundo.loop = true;
+musica_fundo.volume = 0.5;
 
 document.getElementById('playMusic').addEventListener('click', () => {
   if (musica_fundo.paused) {
     musica_fundo.play();
     document.getElementById('playMusic').textContent = "♫ on";
   } else {
-    musica_fundo.pause();
-    document.getElementById('playMusic').textContent = "♫  off";
+    musica_fundo.pause()
+    tiros.pause();
+    document.getElementById('playMusic').textContent = "♫ off";
   }
 });
 
-let groupShootAnimal = []
-let groupShootSoldier = []
+animal.img.src = imagensAnimais[animalSelecionado];
+soldado.img.src = imagensSoldados[soldadoSelecionado];
 
-const animalSelecionado = parseInt(localStorage.getItem("animalSelecionado"));
-const soldadoSelecionado = parseInt(localStorage.getItem("soldadoSelecionado"));
+console.log("Animal selecionado:", animalSelecionado, "Imagem:", imagensAnimais[animalSelecionado]);
+console.log("Soldado selecionado:", soldadoSelecionado, "Imagem:", imagensSoldados[soldadoSelecionado]);
 
-// Define as imagens dos personagens
-const imagensAnimais = ["guaxinimShoot_1.png", "capivaraRight.png"];
-const imagensSoldados = ["soldier3.png", "pinkSoldier.png"];
-
-// Cria os objetos dos jogadores
-const animal = {
-  x: 50,
-  y: 200,
-  width: 50,
-  height: 50,
-  img: new Image(),
-  velocidade: 5
-};
-
-const soldado = {
-  x: 700,
-  y: 200,
-  width: 50,
-  height: 50,
-  img: new Image(),
-  velocidade: 5
-};
-
-// Atribui as imagens corretas
-animal.img.src = `./imagens/${imagensAnimais[animalSelecionado]}`;
-soldado.img.src = `./imagens/${imagensSoldados[soldadoSelecionado]}`;
+let tirosAnimal = [];
+let tirosSoldado = [];
 
 document.addEventListener("keydown", (e) => {
-    switch (e.key) {
-      case "w":
-      case "W":
-        animal.y -= animal.velocidade;
-        break;
-      case "s":
-      case "S":
-        animal.y += animal.velocidade;
-        break;
-      case "ArrowUp":
-        soldado.y -= soldado.velocidade;
-        break;
-      case "ArrowDown":
-        soldado.y += soldado.velocidade;
-        break;
+  if (['w', 's', 'ArrowUp', 'ArrowDown', 'd', 'ArrowLeft'].includes(e.key)) {
+    teclas[e.key] = true;
+  }
+  
+  if (e.key === 'd' && gameActive && tirosAnimal.length < 3) {
+    tirosAnimal.push({
+      x: animal.x + animal.width,
+      y: animal.y + animal.height/2 - 5,
+      width: 30,
+      height: 10,
+      velocidade: 15
+    });
+  }
+  
+  if (e.key === 'ArrowLeft' && gameActive && tirosSoldado.length < 3) {
+    tirosSoldado.push({
+      x: soldado.x - 30,
+      y: soldado.y + soldado.height/2 - 5,
+      width: 30,
+      height: 10,
+      velocidade: 15
+    });
+  }
+});
+
+
+document.addEventListener("keyup", (e) => {
+  if (['w', 's', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+    teclas[e.key] = false;
+  }
+});
+
+function update() {
+  if (!gameActive) return;
+
+  // Movimento animal
+  if (teclas.w) animal.y = Math.max(0, animal.y - animal.velocidade);
+  if (teclas.s) animal.y = Math.min(canvas.height - animal.height, animal.y + animal.velocidade);
+  
+  // Movimento soldado
+  if (teclas.ArrowUp) soldado.y = Math.max(0, soldado.y - soldado.velocidade);
+  if (teclas.ArrowDown) soldado.y = Math.min(canvas.height - soldado.height, soldado.y + soldado.velocidade);
+  
+  // Movimento tiros
+  tirosAnimal.forEach((tiro, index) => {
+    tiro.x += tiro.velocidade;
+    tiros.play()
+    if (tiro.x > canvas.width) {
+      tirosAnimal.splice(index, 1);
     }
   });
-
-  function desenhar() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(animal.img, animal.x, animal.y, animal.width, animal.height);
-    ctx.drawImage(soldado.img, soldado.x, soldado.y, soldado.width, soldado.height);
-    
-    requestAnimationFrame(desenhar);
-  }
-function gameLoop() {
-    desenhar();
-    canvas.clearRect(0, 0, 1300, 600);
-    requestAnimationFrame(gameLoop);
+  
+  tirosSoldado.forEach((tiro, index) => {
+    tiro.x -= tiro.velocidade;
+    tiros.play()
+    if (tiro.x < 0) {
+      tirosSoldado.splice(index, 1);
+    }
+  });
+  verificarColisoes();
 }
 
-gameLoop();
+function verificarColisoes() {
+  tirosAnimal.forEach((tiro, index) => {
+    if (colisao(tiro, soldado)) {
+      tirosAnimal.splice(index, 1);
+      soldado.vidas--;
+      if (soldado.vidas <= 0) {
+        gameOver("ANIMAL");
+      }
+    }
+  });
+  
+  tirosSoldado.forEach((tiro, index) => {
+    if (colisao(tiro, animal)) {
+      tirosSoldado.splice(index, 1);
+      animal.vidas--;
+      if (animal.vidas <= 0) {
+        gameOver("SOLDADO");
+      }
+    }
+  });
+}
+
+function colisao(obj1, obj2) {
+  return obj1.x < obj2.x + obj2.width &&
+         obj1.x + obj1.width > obj2.x &&
+         obj1.y < obj2.y + obj2.height &&
+         obj1.y + obj1.height > obj2.y;
+}
+
+function resetRound() {
+  animal.y = 250;
+  soldado.y = 250;
+  tirosAnimal = [];
+  tirosSoldado = [];
+}
+
+// 2. Substitua a função gameOver por isso:
+function gameOver(vencedor) {
+  gameActive = false;
+  telaVitoriaAtiva = true;
+  
+  // Carrega a imagem FRESCA toda vez
+  imagemVitoriaAtual = new Image();
+  imagemVitoriaAtual.onload = function() {
+    // Força o redesenho
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(imagemVitoriaAtual, 0, 0, canvas.width, canvas.height);
+    
+    // Texto
+    ctx.fillStyle = "orange";
+    ctx.textAlign = "center";
+    ctx.font = "24px Arial";
+    ctx.fillText("Clique para voltar ao menu", canvas.width/2,580);
+  };
+  
+  imagemVitoriaAtual.onerror = function() {
+    // Fallback caso a imagem falhe
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "white";
+    ctx.fillText(`${vencedor} VENCEU!`, canvas.width/2, canvas.height/2);
+  };
+  
+  // Escolhe a imagem correta
+  imagemVitoriaAtual.src = vencedor === "ANIMAL" 
+    ? './assets/WinAnimals.png' 
+    : './assets/winSoldiers.png';
+}
+
+function draw() {
+  if (telaVitoriaAtiva) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  backgroundImg.draw(ctx);
+  
+  if (animal.img.complete && animal.img.naturalWidth !== 0) {
+    ctx.drawImage(animal.img, animal.x, animal.y, animal.width, animal.height);
+  }
+  
+  if (soldado.img.complete && soldado.img.naturalWidth !== 0) {
+    ctx.drawImage(soldado.img, soldado.x, soldado.y, soldado.width, soldado.height);
+  }
+  tirosAnimal.forEach(tiro => {
+    if (tiroAnimalImg.complete) {
+      ctx.drawImage(tiroAnimalImg, tiro.x, tiro.y, tiro.width, tiro.height);
+    }
+  });
+  
+  tirosSoldado.forEach(tiro => {
+    if (tiroSoldadoImg.complete) {
+      ctx.drawImage(tiroSoldadoImg, tiro.x, tiro.y, tiro.width, tiro.height);
+    }
+  });
+  
+  ctx.fillStyle = "white";
+  ctx.font = "24px Arial";
+  
+  // Vidas do animal
+  ctx.fillText(`Vidas: ${animal.vidas}`, 50, 30);
+  drawVidas(animal, 50, 60);
+  
+  // Vidas do soldado
+  ctx.fillText(`Vidas: ${soldado.vidas}`, canvas.width - 150, 30);
+  drawVidas(soldado, canvas.width - 150, 60);
+  
+  if (!gameActive) {
+    return;
+  }
+  requestAnimationFrame(draw);
+}
+
+function drawVidas(personagem, x, y) {
+  ctx.fillStyle = "white";
+  ctx.font = "24px Arial";
+  ctx.fillText(`Vidas: ${animal.vidas}`, 50, 30);
+  ctx.fillText(`Vidas: ${soldado.vidas}`, canvas.width - 150, 30);
+}
+
+let resourcesLoaded = 0;
+const totalResources = 4;
+
+function checkLoading() {
+  resourcesLoaded++;
+  if (resourcesLoaded === totalResources) {
+    requestAnimationFrame(draw);
+    musica_fundo.play();
+  }
+}
+vitoriaAnimal.img.onload = checkLoading;
+vitoriaSoldado.img.onload = checkLoading;
+backgroundImg.img.onload = checkLoading;
+gameOverImg.img.onload = checkLoading;
+animal.img.onload = checkLoading;
+soldado.img.onload = checkLoading;
+
+draw();
+setInterval(update, 1000/60);
+
+canvas.addEventListener("click", () => {
+  if (!gameActive) {
+    window.location.href = "index.html";
+  }
+});

@@ -1,3 +1,4 @@
+
 body {
     background: url('/assets/inicio2.png') no-repeat right center fixed;
     background-size: contain;
@@ -73,7 +74,7 @@ h2 {
     display: flex;
     justify-content: center;
     gap: 20px;
-    width: 380px;
+    width: 370px;
     /* flex-wrap: wrap; */
 }
 
@@ -127,7 +128,7 @@ body{
     .botao1 {
         width: 250px;
         height: 350px;
-        background-image: url('guaxinim.png');
+        background-image: url('./assets/guaxinim.png');
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
@@ -144,7 +145,7 @@ body{
     .botao2 {
         width: 250px;
         height: 350px;
-        background-image: url('capivara.png');
+        background-image: url('./assets/capivara.png');
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
@@ -162,7 +163,7 @@ body{
       .botao3 {
         width: 250px;
         height: 350px;
-        background-image: url('soldado_azul.png');
+        background-image: url('./assets/soldado_azul.png');
         background-repeat: no-repeat;
         background-position: center;
         background-size: contain;
@@ -180,7 +181,7 @@ body{
       .botao4 {
         width: 250px;
         height: 350px;
-        background-image: url('soldado_rosa.png');
+        background-image: url('./assets/soldado_rosa.png');
         background-repeat: no-repeat;
         background-position: center;
         background-size: 248px;
